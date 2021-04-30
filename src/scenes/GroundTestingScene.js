@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { createAligned } from './utils';
 
 const DUDE_KEY = 'dude';
+const GROUND_KEY = 'ground';
 
 export default class GameTestingScene extends Phaser.Scene {
   constructor() {
@@ -20,7 +21,7 @@ export default class GameTestingScene extends Phaser.Scene {
     this.load.image('plateau', 'src/assets/hills.png');
     this.load.image('grass1', 'src/assets/grass1.png');
     this.load.image('grass2', 'src/assets/grass2.png');
-    this.load.image('ground', 'src/assets/ground.png');
+    this.load.image(GROUND_KEY, 'src/assets/ground.png');
 
     this.load.spritesheet(DUDE_KEY, 'src/assets/dude.png', {
       frameWidth: 32,
@@ -42,9 +43,33 @@ export default class GameTestingScene extends Phaser.Scene {
     createAligned(this, totalWidth, 'mountains2', 0.15);
     createAligned(this, totalWidth, 'plateau', 0.5);
     createAligned(this, totalWidth, 'grass1', 0.1116);
-    createAligned(this, totalWidth, 'ground', 1);
-
     this.createPlayer();
+    const platforms = this.createPlatforms();
+
+    this.physics.add.collider(this.player, platforms);
+  }
+
+  createPlatforms() {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const platforms = this.physics.add.staticGroup();
+
+    platforms
+      .create(800, 568, GROUND_KEY, 1)
+      .setScale(1)
+      .refreshBody()
+      .setScrollFactor(1);
+    platforms
+      .create(1500, 568, GROUND_KEY, 1)
+      .setScale(1)
+      .refreshBody()
+      .setScrollFactor(1);
+    platforms
+      .create(3000, 568, GROUND_KEY, 1)
+      .setScale(1)
+      .refreshBody()
+      .setScrollFactor(1);
+    return platforms;
   }
 
   update() {
@@ -54,6 +79,8 @@ export default class GameTestingScene extends Phaser.Scene {
     let velX = 0.0;
     const velY = -330;
     let anim = 'turn';
+
+    this.physics.add.collider(this.player, 'ground');
 
     if (this.cursors.left.isDown) {
       velX = -160;
