@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { createAligned } from './utils';
+import { createAligned, coinCollector } from './utils';
 import ScoreLabel from './ScoreLabel';
 
 const DUDE_KEY = 'dude';
@@ -83,11 +83,12 @@ export default class Doom extends Phaser.Scene {
 
     this.physics.add.collider(this.player, platforms);
     // this.physics.add.collider(this.player, spikes);
+    // const collectFalling = coinCollector(this, this.player, fallingCoins, 15);
 
     this.physics.add.overlap(
       this.player,
       fallingCoins,
-      this.collectFalling,
+      coinCollector(this, this.player, fallingCoins, 15),
       null,
       this
     );
@@ -98,6 +99,7 @@ export default class Doom extends Phaser.Scene {
       null,
       this
     );
+
     this.physics.add.collider(fallingCoins, platforms);
     this.physics.add.collider(bottomCoins, platforms);
   }
@@ -122,11 +124,6 @@ export default class Doom extends Phaser.Scene {
     });
 
     return fallingCoins;
-  }
-
-  collectFalling(player, fallingCoin) {
-    fallingCoin.disableBody(true, true);
-    this.scoreLabel.add(15);
   }
 
   collectBottom(player, bottomCoin) {
@@ -200,7 +197,7 @@ export default class Doom extends Phaser.Scene {
     );
 
     let velX = 0.0;
-    const speed = 460;
+    const speed = 400;
     const velY = -330;
 
     let anim = 'turn';
