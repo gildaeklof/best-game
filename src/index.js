@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import GroundTestingScene from './scenes/GroundTestingScene';
+import Doom from './scenes/Doom';
 import GameScene from './scenes/GameScene';
 
 const config = {
