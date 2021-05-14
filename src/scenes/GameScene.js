@@ -8,13 +8,15 @@ const COIN_KEY = 'coin';
 const JEWEL_KEY = 'jewel';
 const SPIKES_KEY = 'spikes';
 
-export default class Doom extends Phaser.Scene {
+export default class GameScene extends Phaser.Scene {
   constructor() {
-    super('game');
+    super('gamescene');
     this.player = undefined;
     this.scoreLabel = undefined;
     this.debugLabel = undefined;
     this.gameOver = false;
+    this.gameWin = false;
+
     this.gameOverLabel = undefined;
     this.style = { fontSize: '32px', fill: '#000' };
   }
@@ -60,7 +62,6 @@ export default class Doom extends Phaser.Scene {
     const platforms = this.createPlatforms();
     const fallingCoins = this.createFallingCoins();
     const bottomCoins = this.createBottomCoins();
-    // const spikes = this.createSpikes();
 
     this.scoreLabel = this.createScoreLabel(16, 16, 0).setScrollFactor(0);
     this.debugLabel = new Phaser.GameObjects.Text(
@@ -79,10 +80,8 @@ export default class Doom extends Phaser.Scene {
     ).setScrollFactor(0);
 
     this.add.existing(this.debugLabel);
-    this.add.existing(this.gameOverLabel);
 
     this.physics.add.collider(this.player, platforms);
-    // this.physics.add.collider(this.player, spikes);
 
     this.physics.add.overlap(
       this.player,
@@ -160,24 +159,36 @@ export default class Doom extends Phaser.Scene {
     const platforms = this.physics.add.staticGroup();
 
     platforms
-      .create(900, 568, GROUND_KEY, 1)
+      .create(460, 568, GROUND_KEY, 1)
       .setScale(1)
       .refreshBody()
       .setScrollFactor(1);
+    platforms
+      .create(1700, 568, GROUND_KEY, 1)
+      .setScale(1)
+      .refreshBody()
+      .setScrollFactor(1);
+
     platforms
       .create(3200, 568, GROUND_KEY, 1)
       .setScale(1)
       .refreshBody()
       .setScrollFactor(1);
 
-    platforms.create(500, 450, 'platform');
-    platforms.create(800, 360, 'platform');
+    platforms
+      .create(3800, 568, GROUND_KEY, 1)
+      .setScale(1)
+      .refreshBody()
+      .setScrollFactor(1);
+
+    platforms.create(0, 150, 'platform');
     platforms.create(400, 260, 'platform');
+    platforms.create(800, 400, 'platform');
     platforms.create(1200, 300, 'platform');
     platforms.create(1700, 400, 'platform');
-    platforms.create(2400, 290, 'platform');
-    platforms.create(2800, 380, 'platform');
-    platforms.create(3200, 410, 'platform');
+    platforms.create(2400, 390, 'platform');
+    platforms.create(2800, 280, 'platform');
+    platforms.create(3200, 210, 'platform');
     return platforms;
   }
 
@@ -200,7 +211,7 @@ export default class Doom extends Phaser.Scene {
     );
 
     let velX = 0.0;
-    const speed = 460;
+    const speed = 300;
     const velY = -330;
 
     let anim = 'turn';
@@ -241,6 +252,13 @@ export default class Doom extends Phaser.Scene {
     }
     if (this.player.y > 600) {
       this.gameOver = true;
+      this.scene.start('gameover');
+      this.gameOver = false;
+    }
+
+    if (this.player.x > 3733) {
+      this.gameWin = true;
+      this.scene.start('gamewin');
     }
   }
 
