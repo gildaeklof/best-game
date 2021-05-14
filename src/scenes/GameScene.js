@@ -7,6 +7,8 @@ const GROUND_KEY = 'ground';
 const COIN_KEY = 'coin';
 const JEWEL_KEY = 'jewel';
 const SPIKES_KEY = 'spikes';
+const COIN_SOUND = 'coinSound';
+const JEWEL_SOUND = 'jewelSound';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -42,6 +44,9 @@ export default class GameScene extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 48,
     });
+
+    this.load.audio(COIN_SOUND, ['src/assets/coin.mp3']);
+    this.load.audio(JEWEL_SOUND, ['src/assets/jewel.mp3']);
   }
 
   create() {
@@ -62,6 +67,8 @@ export default class GameScene extends Phaser.Scene {
     const platforms = this.createPlatforms();
     const fallingCoins = this.createFallingCoins();
     const bottomCoins = this.createBottomCoins();
+    this.sound.add(COIN_SOUND, { loop: false });
+    this.sound.add(JEWEL_SOUND, { loop: false });
 
     this.scoreLabel = this.createScoreLabel(16, 16, 0).setScrollFactor(0);
     this.debugLabel = new Phaser.GameObjects.Text(
@@ -124,11 +131,13 @@ export default class GameScene extends Phaser.Scene {
   }
 
   collectFalling(player, fallingCoin) {
+    this.sound.play(JEWEL_SOUND);
     fallingCoin.disableBody(true, true);
     this.scoreLabel.add(15);
   }
 
   collectBottom(player, bottomCoin) {
+    this.sound.play(COIN_SOUND);
     bottomCoin.disableBody(true, true);
     this.scoreLabel.add(5);
   }
