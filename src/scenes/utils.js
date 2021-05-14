@@ -12,9 +12,3 @@ export const createAligned = (scene, totalWidth, texture, scrollFactor) => {
     x += m.width;
   }
 };
-
-export const coinCollector = (scene, player, coinType, score) => {
-  const s = coinType.scene.physics.world;
-  s.disableBody(true, true);
-  scene.scoreLabel.add(score);
-};

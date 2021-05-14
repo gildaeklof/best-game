@@ -1,6 +1,8 @@
-import Phaser from 'phaser';
-import Doom from './scenes/Doom';
+import Phaser, { Game } from 'phaser';
+import GameStart from './scenes/GameStart';
+import GameOver from './scenes/GameOver';
 import GameScene from './scenes/GameScene';
+import GameWin from './scenes/GameWin';
 
 const config = {
   type: Phaser.AUTO,
@@ -14,10 +16,10 @@ const config = {
     default: 'arcade',
     arcade: {
       gravity: { y: 300 },
-      debug: true,
+      debug: false,
     },
   },
-  scene: [GameScene],
+  scene: [GameScene, GameOver, GameWin],
 };
 
 export default new Phaser.Game(config);
