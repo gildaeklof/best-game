@@ -1,14 +1,15 @@
 import Phaser, { Game } from 'phaser';
 import GameStart from './scenes/GameStart';
 import GameOver from './scenes/GameOver';
-import GameScene from './scenes/GameScene';
 import GameWin from './scenes/GameWin';
+import GameScene from './scenes/GameScene';
+import Enemy from './scenes/Enemy';
 
 const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  backgroundColor: 0xfffce4ec,
+  backgroundColor: 0x000,
   pixelArt: true,
   zoom: 1,
   fps: 60,

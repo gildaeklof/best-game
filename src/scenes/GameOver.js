@@ -1,11 +1,17 @@
 import Phaser from 'phaser';
 
+const GAMEOVER_SOUND = 'gameoverSound';
+
 export default class GameOver extends Phaser.Scene {
   constructor() {
     super('gameover');
     this.gameOverLabel = undefined;
     this.playAgainLabel = undefined;
-    this.style = { fontSize: '52px', fill: '#000' };
+    this.style = { fontSize: '72px', fill: '#ff0000' };
+  }
+
+  preload() {
+    this.load.audio(GAMEOVER_SOUND, ['src/assets/gameover.mp3']);
   }
 
   create() {
@@ -21,21 +27,24 @@ export default class GameOver extends Phaser.Scene {
       this,
       0,
       0,
-      'Click to try again',
-      { fontSize: '20px', fill: '#000' }
+      'Click anywhere to try again',
+      { fontSize: '20px', fill: '#fff' }
     ).setScrollFactor(0);
 
     this.add.existing(this.playAgainLabel);
 
     this.add.existing(this.gameOverLabel);
+
+    this.sound.add(GAMEOVER_SOUND, { loop: false });
+    this.sound.play(GAMEOVER_SOUND);
   }
 
   update(time, delta) {
-    this.playAgainLabel.x = 400 - 130;
-    this.playAgainLabel.y = 300 - 30;
+    this.playAgainLabel.x = 250;
+    this.playAgainLabel.y = 360;
 
-    this.gameOverLabel.x = 400 - 130;
-    this.gameOverLabel.y = 300;
+    this.gameOverLabel.x = 215;
+    this.gameOverLabel.y = 270;
     this.input.on('pointerdown', () => this.scene.start('gamescene'));
     return;
   }
