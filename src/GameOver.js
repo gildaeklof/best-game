@@ -11,7 +11,7 @@ export default class GameOver extends Phaser.Scene {
   }
 
   preload() {
-    this.load.audio(GAMEOVER_SOUND, ['src/assets/gameover.mp3']);
+    this.load.audio(GAMEOVER_SOUND, ['/gameover.mp3']);
   }
 
   create() {
