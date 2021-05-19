@@ -11,8 +11,8 @@ export default class GameWin extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('sky', 'src/assets/sky-warm.png');
-    this.load.audio(GAMEWIN_SOUND, ['src/assets/gamewin.mp3']);
+    this.load.image('sky', '../public/sky-warm.png');
+    this.load.audio(GAMEWIN_SOUND, ['../public/gamewin.mp3']);
   }
 
   create() {

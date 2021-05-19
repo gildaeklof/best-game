@@ -1,9 +1,9 @@
 import Phaser, { Game } from 'phaser';
-import GameStart from './scenes/GameStart';
-import GameOver from './scenes/GameOver';
-import GameWin from './scenes/GameWin';
-import GameScene from './scenes/GameScene';
-import Enemy from './scenes/Enemy';
+import GameStart from './GameStart';
+import GameOver from './GameOver';
+import GameWin from './GameWin';
+import GameScene from './GameScene';
+import Enemy from './Enemy';
 
 const config = {
   type: Phaser.AUTO,

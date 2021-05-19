@@ -31,30 +31,30 @@ export default class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('sky', 'src/assets/sky-warm.png');
-    this.load.image('mountains1', 'src/assets/mountains1.png');
-    this.load.image('mountains2', 'src/assets/mountains2.png');
-    this.load.image('plateau', 'src/assets/hills.png');
-    this.load.image('grass1', 'src/assets/grass1.png');
-    this.load.image('grass2', 'src/assets/grass2.png');
-    this.load.image(GROUND_KEY, 'src/assets/ground.png');
-    this.load.image('platform', 'src/assets/platform.png');
-    this.load.image(COIN_KEY, 'src/assets/coin.png');
-    this.load.image(JEWEL_KEY, 'src/assets/jewel.png');
+    this.load.image('sky', '/sky-warm.png');
+    this.load.image('mountains1', '/mountains1.png');
+    this.load.image('mountains2', '/mountains2.png');
+    this.load.image('plateau', '/hills.png');
+    this.load.image('grass1', '/grass1.png');
+    this.load.image('grass2', '/grass2.png');
+    this.load.image(GROUND_KEY, '/ground.png');
+    this.load.image('platform', '/platform.png');
+    this.load.image(COIN_KEY, '/coin.png');
+    this.load.image(JEWEL_KEY, '/jewel.png');
 
-    this.load.spritesheet(DUDE_KEY, 'src/assets/dude.png', {
+    this.load.spritesheet(DUDE_KEY, '/dude.png', {
       frameWidth: 32,
       frameHeight: 48,
     });
 
-    this.load.spritesheet(BUNNY_KEY, 'src/assets/bunny.png', {
+    this.load.spritesheet(BUNNY_KEY, '/bunny.png', {
       frameWidth: 32,
       frameHeight: 48,
     });
 
-    this.load.audio(COIN_SOUND, ['src/assets/coin.mp3']);
-    this.load.audio(JEWEL_SOUND, ['src/assets/jewel.mp3']);
-    this.load.audio(DAMAGE_SOUND, ['src/assets/damage.mp3']);
+    this.load.audio(COIN_SOUND, ['/coin.mp3']);
+    this.load.audio(JEWEL_SOUND, ['/jewel.mp3']);
+    this.load.audio(DAMAGE_SOUND, ['/damage.mp3']);
   }
 
   create() {
