@@ -9,9 +9,10 @@ const GROUND_KEY = 'ground';
 const COIN_KEY = 'coin';
 const BUNNY_KEY = 'bunny';
 const JEWEL_KEY = 'jewel';
-const SPIKES_KEY = 'spikes';
 const COIN_SOUND = 'coinSound';
 const JEWEL_SOUND = 'jewelSound';
+const DAMAGE_SOUND = 'damageSound';
+const ENEMY_SPEED = 150;
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -22,8 +23,6 @@ export default class GameScene extends Phaser.Scene {
     this.debugLabel = undefined;
     this.gameOver = false;
     this.gameWin = false;
-
-    this.gameOverLabel = undefined;
     this.style = { fontSize: '32px', fill: '#000' };
   }
 
@@ -42,7 +41,6 @@ export default class GameScene extends Phaser.Scene {
     this.load.image('platform', 'src/assets/platform.png');
     this.load.image(COIN_KEY, 'src/assets/coin.png');
     this.load.image(JEWEL_KEY, 'src/assets/jewel.png');
-    this.load.image(SPIKES_KEY, 'src/assets/spikes.png');
 
     this.load.spritesheet(DUDE_KEY, 'src/assets/dude.png', {
       frameWidth: 32,
@@ -56,6 +54,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.load.audio(COIN_SOUND, ['src/assets/coin.mp3']);
     this.load.audio(JEWEL_SOUND, ['src/assets/jewel.mp3']);
+    this.load.audio(DAMAGE_SOUND, ['src/assets/damage.mp3']);
   }
 
   create() {
@@ -75,16 +74,16 @@ export default class GameScene extends Phaser.Scene {
     const platforms = this.createPlatforms();
     const fallingCoins = this.createFallingCoins();
     const bottomCoins = this.createBottomCoins();
-    let enemy;
 
     this.createPlayer();
 
     platforms.getChildren().forEach((platform) => {
-      enemy = this.createEnemy(platform.x, platform.y - 50);
+      this.createEnemy(platform.x, platform.y - 100);
     });
 
     this.sound.add(COIN_SOUND, { loop: false });
     this.sound.add(JEWEL_SOUND, { loop: false });
+    this.sound.add(DAMAGE_SOUND, { loop: false });
 
     this.scoreLabel = this.createScoreLabel(16, 16, 0).setScrollFactor(0);
     this.debugLabel = new Phaser.GameObjects.Text(
@@ -94,20 +93,9 @@ export default class GameScene extends Phaser.Scene {
       'X, Y',
       this.style
     ).setScrollFactor(0);
-    this.gameOverLabel = new Phaser.GameObjects.Text(
-      this,
-      -120,
-      -150,
-      'GAME OVER',
-      this.style
-    ).setScrollFactor(0);
-
     this.add.existing(this.debugLabel);
 
     this.physics.add.collider(this.player, platforms);
-    this.enemies.forEach((enemy) =>
-      this.physics.add.collider(enemy, platforms)
-    );
 
     this.physics.add.overlap(
       this.player,
@@ -123,11 +111,21 @@ export default class GameScene extends Phaser.Scene {
       null,
       this
     );
-
-    this.physics.add.overlap(this.player, enemy, this.collideEnemy, null, this);
+    this.enemies.forEach((enemy) => {
+      this.physics.add.overlap(
+        this.player,
+        enemy,
+        this.collideEnemy,
+        null,
+        this
+      );
+    });
 
     this.physics.add.collider(fallingCoins, platforms);
     this.physics.add.collider(bottomCoins, platforms);
+    this.enemies.forEach((enemy) =>
+      this.physics.add.collider(enemy, platforms)
+    );
   }
 
   createBottomCoins() {
@@ -164,30 +162,12 @@ export default class GameScene extends Phaser.Scene {
     this.scoreLabel.add(5);
   }
 
-  collideEnemy(player, enemy) {
-    this.sound.play(COIN_SOUND);
-    enemy.disableBody(true, true);
-    this.scoreLabel.add(-5);
-  }
-
   createScoreLabel(x, y, score) {
     const label = new ScoreLabel(this, x, y, score, this.style);
 
     this.add.existing(label);
 
     return label;
-  }
-
-  createSpikes() {
-    const spikes = this.physics.add.staticGroup();
-
-    spikes
-      .create(2050, 568, SPIKES_KEY, 1)
-      .setScale(1)
-      .refreshBody()
-      .setScrollFactor(1);
-
-    return spikes;
   }
 
   createPlatforms() {
@@ -232,7 +212,7 @@ export default class GameScene extends Phaser.Scene {
     let enemy = this.physics.add
       .sprite(x, y, BUNNY_KEY)
       .setCollideWorldBounds(false);
-    enemy.setBounce(0.2);
+    enemy.setBounce(1);
     enemy.setScrollFactor(1);
     enemy.startX = x;
     enemy.startY = y;
@@ -256,16 +236,23 @@ export default class GameScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
     });
+
+    enemy.setVelocityX(ENEMY_SPEED);
+    enemy.anims.play('e_right', true);
     this.enemies.push(enemy);
   }
 
-  update(time, delta) {
-    if (this.gameOver) {
-      this.gameOverLabel.x = 150;
-      this.gameOverLabel.y = 120;
-      return;
-    }
+  collideEnemy(player, enemy) {
+    this.sound.play(DAMAGE_SOUND);
+    enemy.disableBody(false, false);
+    player.setTint(0xff0000);
+    setTimeout(() => {
+      player.clearTint();
+    }, 400);
+    this.scoreLabel.add(-1);
+  }
 
+  update(time, delta) {
     this.debugLabel.setText(
       'X=' +
         Math.ceil(this.player.x) +
@@ -314,8 +301,10 @@ export default class GameScene extends Phaser.Scene {
     this.player.anims.play(anim, true);
 
     // Check if fell off platform
-    if (this.scoreLabel === 0) {
+    if (this.scoreLabel.score < 0) {
       this.gameOver = true;
+      this.scene.start('gameover');
+      this.gameOver = false;
     }
     if (this.player.y > 600) {
       this.gameOver = true;
@@ -326,22 +315,44 @@ export default class GameScene extends Phaser.Scene {
     if (this.player.x > 3733) {
       this.gameWin = true;
       this.scene.start('gamewin');
+      this.gameWin = false;
     }
 
     // update enemies
+
+    let rightCol = false;
+    let leftCol = false;
     this.enemies.forEach((enemy) => {
       const x = enemy.x;
-      let eVelX = speed;
-      const w = 32;
-      if (x + w >= enemy.startX + PLATFORM_W / 2) {
-        eVelX = -speed;
+      const startX = enemy.startX;
+      const w = 32 / 2;
+      const pWidth = PLATFORM_W / 2;
 
-        enemy.setVelocityX(eVelX / 4);
+      if (x + w >= startX + pWidth) {
+        rightCol = true;
+        enemy.setVelocityX(-ENEMY_SPEED);
+        enemy.anims.play('e_left', true);
+      } else if (x <= startX - pWidth) {
+        leftCol = true;
+        enemy.setVelocityX(ENEMY_SPEED);
+        enemy.anims.play('e_right', true);
       }
-
-      // enemy.setVelocityX(speed / 2);
-      // enemy.anims.play('e_right', true);
     });
+
+    this.debugLabel.setText(
+      'X=' +
+        Math.ceil(this.player.x) +
+        ', Y=' +
+        Math.ceil(this.player.y) +
+        ', W=' +
+        this.player.width +
+        ' Screen Width=' +
+        this.cameras.main.getBounds().width +
+        '\nleftCol = ' +
+        leftCol +
+        '\nrightCol = ' +
+        rightCol
+    );
   }
 
   createPlayer() {
