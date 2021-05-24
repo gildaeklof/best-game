@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser, { Textures } from 'phaser';
 import { createAligned } from './utils';
 import ScoreLabel from './ScoreLabel';
 
@@ -12,7 +12,10 @@ const JEWEL_KEY = 'jewel';
 const COIN_SOUND = 'coinSound';
 const JEWEL_SOUND = 'jewelSound';
 const DAMAGE_SOUND = 'damageSound';
+const BACKGROUND_SOUND = 'backgroundSound';
+
 const ENEMY_SPEED = 150;
+let INVINCIBLE = false;
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -55,9 +58,16 @@ export default class GameScene extends Phaser.Scene {
     this.load.audio(COIN_SOUND, ['/coin.mp3']);
     this.load.audio(JEWEL_SOUND, ['/jewel.mp3']);
     this.load.audio(DAMAGE_SOUND, ['/damage.mp3']);
+    this.load.audio(BACKGROUND_SOUND, ['/background.mp3']);
   }
 
   create() {
+    if (this.gameOver) {
+      this.sound.stop(BACKGROUND_SOUND);
+    } else {
+      this.sound.play(BACKGROUND_SOUND);
+    }
+
     this.cameras.main.setBounds(0, 0, 1920 * 2, 600);
     this.physics.world.setBounds(0, 0, 1920 * 2, 600);
 
@@ -84,6 +94,7 @@ export default class GameScene extends Phaser.Scene {
     this.sound.add(COIN_SOUND, { loop: false });
     this.sound.add(JEWEL_SOUND, { loop: false });
     this.sound.add(DAMAGE_SOUND, { loop: false });
+    this.sound.add(BACKGROUND_SOUND, { loop: true });
 
     this.scoreLabel = this.createScoreLabel(16, 16, 0).setScrollFactor(0);
     this.debugLabel = new Phaser.GameObjects.Text(
@@ -152,21 +163,19 @@ export default class GameScene extends Phaser.Scene {
 
   collectFalling(player, fallingCoin) {
     this.sound.play(JEWEL_SOUND);
-    fallingCoin.disableBody(true, true);
+    fallingCoin.destroy(true, true);
     this.scoreLabel.add(15);
   }
 
   collectBottom(player, bottomCoin) {
     this.sound.play(COIN_SOUND);
-    bottomCoin.disableBody(true, true);
+    bottomCoin.destroy(true, true);
     this.scoreLabel.add(5);
   }
 
   createScoreLabel(x, y, score) {
     const label = new ScoreLabel(this, x, y, score, this.style);
-
     this.add.existing(label);
-
     return label;
   }
 
@@ -243,25 +252,27 @@ export default class GameScene extends Phaser.Scene {
   }
 
   collideEnemy(player, enemy) {
-    this.sound.play(DAMAGE_SOUND);
-    enemy.disableBody(false, false);
     player.setTint(0xff0000);
+
+    if (!INVINCIBLE) {
+      this.scoreLabel.add(-10);
+      this.sound.play(DAMAGE_SOUND);
+    }
+
     setTimeout(() => {
       player.clearTint();
-    }, 400);
-    this.scoreLabel.add(-1);
+      INVINCIBLE = false;
+    }, 2000);
+
+    INVINCIBLE = true;
   }
 
   update(time, delta) {
     this.debugLabel.setText(
-      'X=' +
-        Math.ceil(this.player.x) +
-        ', Y=' +
-        Math.ceil(this.player.y) +
-        ', W=' +
-        this.player.width +
-        ' Screen Width=' +
-        this.cameras.main.getBounds().width
+      `X= ${Math.ceil(this.player.x)} Y= ${Math.ceil(this.player.y)} ${
+        this.player.width
+      } Screen Width= ${this.cameras.main.getBounds().width}
+      INV ${INVINCIBLE}`
     );
 
     let velX = 0.0;
@@ -300,7 +311,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.player.anims.play(anim, true);
 
-    // Check if fell off platform
     if (this.scoreLabel.score < 0) {
       this.gameOver = true;
       this.scene.start('gameover');
@@ -317,8 +327,6 @@ export default class GameScene extends Phaser.Scene {
       this.scene.start('gamewin');
       this.gameWin = false;
     }
-
-    // update enemies
 
     let rightCol = false;
     let leftCol = false;
@@ -338,21 +346,6 @@ export default class GameScene extends Phaser.Scene {
         enemy.anims.play('e_right', true);
       }
     });
-
-    this.debugLabel.setText(
-      'X=' +
-        Math.ceil(this.player.x) +
-        ', Y=' +
-        Math.ceil(this.player.y) +
-        ', W=' +
-        this.player.width +
-        ' Screen Width=' +
-        this.cameras.main.getBounds().width +
-        '\nleftCol = ' +
-        leftCol +
-        '\nrightCol = ' +
-        rightCol
-    );
   }
 
   createPlayer() {
