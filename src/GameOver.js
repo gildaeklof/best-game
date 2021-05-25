@@ -45,7 +45,7 @@ export default class GameOver extends Phaser.Scene {
 
     this.gameOverLabel.x = 215;
     this.gameOverLabel.y = 270;
-    this.input.on('pointerdown', () => this.scene.start('gamescene'));
+    this.input.on('pointerdown', () => window.location.reload());
     return;
   }
 }
