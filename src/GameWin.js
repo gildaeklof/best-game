@@ -51,7 +51,7 @@ export default class GameWin extends Phaser.Scene {
 
     this.youWinLabel.x = 230;
     this.youWinLabel.y = 270;
-    this.input.on('pointerdown', () => this.scene.start('gamescene'));
+    this.input.on('pointerdown', () => window.location.reload());
     return;
   }
 }
