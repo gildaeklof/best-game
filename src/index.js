@@ -1,9 +1,7 @@
 import Phaser, { Game } from 'phaser';
-import GameStart from './GameStart';
 import GameOver from './GameOver';
 import GameWin from './GameWin';
 import GameScene from './GameScene';
-import Enemy from './Enemy';
 
 const config = {
   type: Phaser.AUTO,
@@ -20,7 +18,7 @@ const config = {
       debug: false,
     },
   },
-  scene: [Enemy, GameOver, GameWin],
+  scene: [GameScene, GameOver, GameWin],
 };
 
 export default new Phaser.Game(config);
