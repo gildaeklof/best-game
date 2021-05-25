@@ -12,6 +12,7 @@ const JEWEL_KEY = 'jewel';
 const COIN_SOUND = 'coinSound';
 const JEWEL_SOUND = 'jewelSound';
 const DAMAGE_SOUND = 'damageSound';
+
 const ENEMY_SPEED = 150;
 let INVINCIBLE = false;
 
@@ -21,7 +22,6 @@ export default class GameScene extends Phaser.Scene {
     this.player = undefined;
     this.enemies = [];
     this.scoreLabel = undefined;
-    this.debugLabel = undefined;
     this.gameOver = false;
     this.gameWin = false;
     this.style = { fontSize: '32px', fill: '#000' };
@@ -32,6 +32,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   preload() {
+    this.load.audio('bgmusic', ['/background4.mp3']);
     this.load.image('sky', '/sky-warm.png');
     this.load.image('mountains1', '/mountains1.png');
     this.load.image('mountains2', '/mountains2.png');
@@ -42,6 +43,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image('platform', '/platform.png');
     this.load.image(COIN_KEY, '/coin.png');
     this.load.image(JEWEL_KEY, '/jewel.png');
+    this.load.image('spark', '/spark.png');
 
     this.load.spritesheet(DUDE_KEY, '/dude.png', {
       frameWidth: 32,
@@ -59,6 +61,17 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.music = this.sound.add('bgmusic');
+    var musicConfig = {
+      mute: false,
+      volume: 1,
+      rate: 1,
+      detune: 0,
+      seek: 0,
+      loop: true,
+      delay: 0,
+    };
+    this.music.play(musicConfig);
     this.cameras.main.setBounds(0, 0, 1920 * 2, 600);
     this.physics.world.setBounds(0, 0, 1920 * 2, 600);
 
@@ -87,14 +100,6 @@ export default class GameScene extends Phaser.Scene {
     this.sound.add(DAMAGE_SOUND, { loop: false });
 
     this.scoreLabel = this.createScoreLabel(16, 16, 0).setScrollFactor(0);
-    this.debugLabel = new Phaser.GameObjects.Text(
-      this,
-      16,
-      50,
-      'X, Y',
-      this.style
-    ).setScrollFactor(0);
-    this.add.existing(this.debugLabel);
 
     this.physics.add.collider(this.player, platforms);
 
@@ -127,6 +132,18 @@ export default class GameScene extends Phaser.Scene {
     this.enemies.forEach((enemy) =>
       this.physics.add.collider(enemy, platforms)
     );
+
+    var particles = this.add.particles('spark');
+
+    var emitter = particles.createEmitter({
+      x: 3733,
+      y: 520,
+      angle: { min: 360, max: 180 },
+      speed: 200,
+      gravityY: 200,
+      lifespan: { min: 100, max: 600 },
+      blendMode: 'ADD',
+    });
   }
 
   createBottomCoins() {
@@ -258,15 +275,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   update(time, delta) {
-    this.debugLabel.setText(
-      `X= ${Math.ceil(this.player.x)} Y= ${Math.ceil(this.player.y)} ${
-        this.player.width
-      } Screen Width= ${this.cameras.main.getBounds().width}
-      INV ${INVINCIBLE}`
-    );
-
     let velX = 0.0;
-    const speed = 300;
+    const speed = 400;
     const velY = -330;
 
     let anim = 'turn';
@@ -302,17 +312,20 @@ export default class GameScene extends Phaser.Scene {
     this.player.anims.play(anim, true);
 
     if (this.scoreLabel.score < 0) {
+      this.music.stop();
       this.gameOver = true;
       this.scene.start('gameover');
       this.gameOver = false;
     }
     if (this.player.y > 600) {
+      this.music.stop();
       this.gameOver = true;
       this.scene.start('gameover');
       this.gameOver = false;
     }
 
     if (this.player.x > 3733) {
+      this.music.stop();
       this.gameWin = true;
       this.scene.start('gamewin');
       this.gameWin = false;
