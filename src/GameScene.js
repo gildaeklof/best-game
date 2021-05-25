@@ -276,7 +276,7 @@ export default class GameScene extends Phaser.Scene {
 
   update(time, delta) {
     let velX = 0.0;
-    const speed = 400;
+    const speed = 300;
     const velY = -330;
 
     let anim = 'turn';
