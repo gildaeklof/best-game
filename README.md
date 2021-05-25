@@ -1,16 +1,35 @@
-INSERT MANDATORY GIF
+![](https://media.giphy.com/media/KcKAiYMbLMdGS8KsB3/giphy.gif)
 
-# Project Title
+# The Bunny Mansion
 
-Text about the project and which JavaScript library you're using. This would also be a great place to link the game on Netlify.
+We created a platformer game called The Bunny Mansion (not the Bunny Mansion you might have expected...), using Phaser 3. Try to make it to the end of the level, and avoid the bunnies, they will hurt you!
+[The Bunny Mansion](https://bunnymansion.netlify.app/)
 
 # Installation
 
-Add the installation instructions.
+1. Clone the repository.
+2. Run `npm install`.
+3. Start a local server, `npm run dev`.
+4. HAVE FUN!!!
 
 # Changelog
 
-- [#1 - Add a link to each pull request with a descriptive line.](#1)
+- [#1 - Initial scene setup.](https://github.com/gildaeklof/best-game/pull/1)
+- [#2 - Added jumping feature.](https://github.com/gildaeklof/best-game/pull/2)
+- [#3 - Added coins, jewels, and platforms.](https://github.com/gildaeklof/best-game/pull/3)
+- [#4 - Added game over scene.](https://github.com/gildaeklof/best-game/pull/4)
+- [#5 - Added new gae scenes.](https://github.com/gildaeklof/best-game/pull/5)
+- [#6 - Added sound effects.](https://github.com/gildaeklof/best-game/pull/6)
+- [#7 - Updated sound effects.](https://github.com/gildaeklof/best-game/pull/7)
+- [#8 - Enemies damage player.](https://github.com/gildaeklof/best-game/pull/8)
+- [#9 - Changed bundler to Vite.](https://github.com/gildaeklof/best-game/pull/9)
+- [#10 - Fixed image path.](https://github.com/gildaeklof/best-game/pull/10)
+- [#11 - Improved collision with enemies.](https://github.com/gildaeklof/best-game/pull/11)
+- [#12 - Added goal.](https://github.com/gildaeklof/best-game/pull/12)
+- [#13 - Cleaned up code.](https://github.com/gildaeklof/best-game/pull/13)
+- [#14 - Added favicon and assets.](https://github.com/gildaeklof/best-game/pull/14)
+- [#15 - Fixed sound on retry.](https://github.com/gildaeklof/best-game/pull/15)
+- [#17 - Added README.](https://github.com/gildaeklof/best-game/pull/17)
 
 # Code Review
 
@@ -31,12 +50,12 @@ Tested by the following people:
 
 1. felixgren
 2. pnpjss
-3. Jane Doe
-4. John Doe
+3. Rikard Segerkvist
+4. Amanda Fager
 
 Tested by the following muggles (non-coders):
 
-1. Jane Doe
-2. John Doe
-3. Jane Doe
-4. John Doe
+1. Julia Fredin
+2. Claudia Delbro
+3. Filippa Von Liewen Wistrand
+4. Aline Carvalho Nejstgaard
